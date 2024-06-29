@@ -5,4 +5,6 @@ export const chessEvents = {
   MOVE: "move",
   ChatToServer: "chat-to-server",
   ChatFromServer: "chat-from-server",
+  WARNING_MSG: "warning-message",
+  CRITICAL_MSG: "critical-message",
 };

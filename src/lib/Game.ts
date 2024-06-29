@@ -9,8 +9,7 @@ class Game {
   public player1: Socket;
   public player2: Socket;
   public board: Chess;
-  private moves: { from: string; to: string }[];
-  private startTime: Date;
+  private moves: { from: string; to: string; col: string; piece: string }[];
   private chats: Message[];
 
   constructor(player1: Socket, player2: Socket) {
@@ -19,42 +18,44 @@ class Game {
     this.player2 = player2;
     this.board = new Chess();
     this.moves = [];
-    this.startTime = new Date();
     this.chats = [];
   }
 
-  moveHandler(
-    // player: Socket,
-    move: {
-      from: string;
-      to: string;
-    }
-  ) {
-    // validate move param
-    // is it this user's move
-    // is the move valid
-    // update the board
-    // check  for checkmate/stalemate
+  moveHandler(move: { from: string; to: string }) {
+    const currTurn = this.board.turn();
 
     try {
       this.board.move(move);
-      this.moves.push(move);
-      const turn = this.board.turn();
+
+      const history = this.board.history({ verbose: true });
+      const lastMv = history[history.length - 1];
+      const moveToSend = {
+        from: lastMv.from,
+        to: lastMv.to,
+        col: lastMv.color,
+        piece: lastMv.piece,
+      };
+      this.moves.push(moveToSend);
+      const nxtTurn = this.board.turn();
+
       io.to(this.gameId).emit(
         chessEvents.UPDATE_BOARD,
         this.board.board(),
-        turn
+        nxtTurn,
+        moveToSend
       );
     } catch (err: any) {
       if (err.message.startsWith("Invalid move")) {
-        //todo warning
+        const message = "Invalid move please try again";
+        io.to(this.gameId).emit(chessEvents.WARNING_MSG, message, currTurn);
+        console.log(err);
       }
     }
 
-    // this.board.moves();
-
     // this.board.inCheck();
+
     // this.board.isCheckmate();
+
     // this.board.isDraw();
     // this.board.isStalemate();
     // this.board.isGameOver();
