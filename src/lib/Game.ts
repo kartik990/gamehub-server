@@ -21,7 +21,7 @@ class Game {
     this.chats = [];
   }
 
-  moveHandler(move: { from: string; to: string }) {
+  moveHandler(move: { from: string; to: string; promotion?: string }) {
     const currTurn = this.board.turn();
 
     try {
@@ -37,13 +37,14 @@ class Game {
       };
       this.moves.push(moveToSend);
       const nxtTurn = this.board.turn();
+      const isCheck = this.board.inCheck();
 
-      io.to(this.gameId).emit(
-        chessEvents.UPDATE_BOARD,
-        this.board.board(),
-        nxtTurn,
-        moveToSend
-      );
+      io.to(this.gameId).emit(chessEvents.UPDATE_BOARD, {
+        board: this.board.board(),
+        turn: nxtTurn,
+        latestMove: moveToSend,
+        isCheck,
+      });
     } catch (err: any) {
       if (err.message.startsWith("Invalid move")) {
         const message = "Invalid move please try again";

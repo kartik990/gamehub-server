@@ -27,7 +27,10 @@ io.on("connection", (socket) => {
 
   socket.on(
     chessEvents.MOVE,
-    (gameId: string, move: { from: string; to: string }) => {
+    (
+      gameId: string,
+      move: { from: string; to: string; promotion?: string }
+    ) => {
       const game = gameManager.findGameByGameId(gameId);
       if (game) {
         game.moveHandler(move);
