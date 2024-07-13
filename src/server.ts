@@ -7,7 +7,7 @@ const server = http.createServer(app);
 
 app.use(express.static("public"));
 
-const port = 8080;
+const port = process.env.PORT || 8080;
 server.listen(port, () => {
   const address = server.address() as AddressInfo;
   console.log(`Server listening on port ${address.port}`);
