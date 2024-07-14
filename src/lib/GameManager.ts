@@ -1,6 +1,7 @@
 import { Socket } from "socket.io";
 import { chessEvents } from "../constants/events";
 import Game from "./Game";
+import { io } from "..";
 
 class GameManager {
   private games: Game[];
@@ -55,6 +56,18 @@ class GameManager {
 
   removeUser(socket: Socket) {
     this.activePlayers = this.activePlayers.filter((id) => id != socket);
+    this.rooms = this.rooms.filter((room) => room.waitingPlayer != socket);
+
+    if (this.pendingUser == socket) {
+      this.pendingUser = null;
+    }
+
+    const game = this.findGameByPlayerId(socket.id);
+    if (game) {
+      io.to(game.gameId).emit(chessEvents.GAME_OVER, {
+        message: "The other player left!",
+      });
+    }
   }
 
   findGameByPlayerId(id: string) {

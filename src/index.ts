@@ -22,12 +22,10 @@ io.on("connection", (socket) => {
   socket.on("error", console.log);
 
   socket.on(chessEvents.CREATE_ROOM, (roomId) => {
-    console.log("create roomId=> ", roomId);
     gameManager.createRoom(socket, roomId);
   });
 
   socket.on(chessEvents.JOIN_ROOM, (roomId) => {
-    console.log("join roomId=> ", roomId);
     gameManager.joinRoom(socket, roomId);
   });
 

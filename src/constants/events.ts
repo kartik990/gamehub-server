@@ -10,4 +10,5 @@ export const chessEvents = {
   CRITICAL_MSG: "critical-message",
   CREATE_ROOM: "join-room",
   JOIN_ROOM: "create-room",
+  GAME_OVER: "game-over",
 };

@@ -38,12 +38,38 @@ class Game {
       this.moves.push(moveToSend);
       const nxtTurn = this.board.turn();
       const isCheck = this.board.inCheck();
+      let gameOver = {
+        isTrue: false,
+        reason: "",
+      };
+
+      if (this.board.isCheckmate()) {
+        gameOver = {
+          isTrue: true,
+          reason: "checkMate",
+        };
+      }
+
+      if (this.board.isDraw()) {
+        gameOver = {
+          isTrue: true,
+          reason: "draw",
+        };
+      }
+
+      if (this.board.isStalemate()) {
+        gameOver = {
+          isTrue: true,
+          reason: "stalemate",
+        };
+      }
 
       io.to(this.gameId).emit(chessEvents.UPDATE_BOARD, {
         board: this.board.board(),
         turn: nxtTurn,
         latestMove: moveToSend,
         isCheck,
+        gameOver,
       });
     } catch (err: any) {
       if (err.message.startsWith("Invalid move")) {
@@ -52,17 +78,6 @@ class Game {
         console.log(err);
       }
     }
-
-    // this.board.inCheck();
-
-    // this.board.isCheckmate();
-
-    // this.board.isDraw();
-    // this.board.isStalemate();
-    // this.board.isGameOver();
-    // this.board.isInsufficientMaterial();
-
-    // broadcast the move
   }
 
   messageHandler(message: Message) {
