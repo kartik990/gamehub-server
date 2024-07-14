@@ -35,10 +35,6 @@ io.on("connection", (socket) => {
     gameManager.addUser(socket);
   });
 
-  socket.on(chessEvents.CREATE_ROOM, () => {
-    gameManager.addUser(socket);
-  });
-
   socket.on(
     chessEvents.MOVE,
     (
